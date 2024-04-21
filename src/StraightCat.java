@@ -1,17 +1,18 @@
 import java.util.List;
 
 public class StraightCat extends Cat {
-    int nPoints=5;
-    int[] patterns;
-    int[] directions={0,1,2};
 
-    boolean isFlexible=false;
-
-    int size=3;
 
     public StraightCat(int[] patterns) {
         super(patterns);
+        this.directions=new int[]{0,1,2};
+        this.size=3;
+        this.isFlexible=false;
+        this.points=5;
+        this.name = "Straight";
     }
+
+
 
 
 
@@ -19,7 +20,8 @@ public class StraightCat extends Cat {
         return new int[]{
                 position,
                 board.goDirection(position, direction, 1),
-                board.goDirection(position, direction, 2)};
+                board.goDirection(position, direction, 2)
+                };
 
     };
 

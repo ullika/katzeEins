@@ -1,8 +1,10 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class Board {
-    int n=41;
+    int n=44;
     int nEmpty=22;
+    int nFixed=22; //44-22 fixed at the beginning
 
     int patternCliqueCounter;
     int colorCliqueCounter;
@@ -15,20 +17,42 @@ public abstract class Board {
     int[] colorClique;
     ArrayList<Integer>[] patternCliqueMembers; //stores positions for each clique
     ArrayList<Integer>[] colorCliqueMembers;
+
+    public Board() {
+        this.patternCliqueCounter=n-nEmpty-1;
+        this.colorCliqueCounter=n-nEmpty-1;
+        this.colors = new int[n];
+        this.patterns = new int[n];
+        this.patternClique = new int[n];
+        this.colorClique = new int[n];
+        this.neighbors = new int[n][n];
+        this.patternCliqueMembers = new ArrayList[n];
+        this.colorCliqueMembers = new ArrayList[n];
+
+    }
     Boolean isEmpty(int position) {return -1==colors[position];}
 
     int updateCliques(int position,int quality,int counter,int[] qualityClique,ArrayList<Integer>[] qualityCliqueMembers, int[] qualities) {
         int[] nbs=neighbors[position];
         qualityClique[position]=++counter;
-        patternCliqueMembers[counter]=new ArrayList<>(position);
+        qualityCliqueMembers[counter]=new ArrayList<>(position);
+        qualityCliqueMembers[counter].add(position);
 
         for (int nb:nbs
              ) {
-            if (qualities[nb]==quality) {
+
+            if (-1 == nb) {
+                continue;
+            }
+            if (qualities[nb]==quality&&qualityClique[nb]!=counter) {
+                System.out.println(String.format("Position %d has neighbor %d with same quality. old clique id %d. " +
+                        "number of members: %d ",position,nb,qualityClique[nb],qualityCliqueMembers[qualityClique[nb]].size()));
+
                 //melt nb's clique into the new one
                 int clique=qualityClique[nb];
                 for (int member:qualityCliqueMembers[clique]
                      ) {
+                    System.out.println(String.format("old clique id: %d, new id: %d",clique,counter));
                     qualityCliqueMembers[counter].add(member);
                     qualityClique[member]=counter;
                 }
@@ -41,13 +65,13 @@ public abstract class Board {
 
 
     int[] update(int position,Card card) {
-        int pClique=updateCliques(position,card.pattern,patternCliqueCounter,patternClique,patternCliqueMembers,patterns);
-        int cClique=updateCliques(position,card.color,colorCliqueCounter,colorClique,colorCliqueMembers,colors);
+        this.patternCliqueCounter=updateCliques(position,card.pattern,patternCliqueCounter,patternClique,patternCliqueMembers,patterns);
+        this.colorCliqueCounter=updateCliques(position,card.color,colorCliqueCounter,colorClique,colorCliqueMembers,colors);
 
         colors[position]= card.color;
         patterns[position]=card.pattern;
         this.nEmpty--;
-        return new int[]{card.pattern,pClique,card.color, cClique};
+        return new int[]{card.pattern,this.patternCliqueCounter,card.color, this.colorCliqueCounter};
     }
 
     int goDirection(int position, int direction, int nSteps) {

@@ -4,11 +4,18 @@ public abstract class Cat {
     int size;
     int[] patterns;
     int points;
+    String name;
+
 
     boolean isFlexible;
-    int[] directions; //directions the cat can head without symmetries
+    int[] directions;
+
     int getSize() {
         return this.size;}
+
+    public String toString() {
+        return this.name;
+    }
 
     boolean isFlexible() {
         return isFlexible;
@@ -35,7 +42,7 @@ public abstract class Cat {
 
     int[] getDirections() {
         return this.directions;
-    }
+    } //directions the cat can head without symmetries
     int getPoints() {
         return this.points;}
 }

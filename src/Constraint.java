@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class Constraint {
@@ -17,6 +18,9 @@ public class Constraint {
         return pointsFull;
     }
 
+    public String toString() {
+        return Arrays.toString(this.code);
+    }
     public boolean dependsOn(int pos) {
         for (int position:positions
         ) {
@@ -47,7 +51,13 @@ public class Constraint {
 
     public Constraint(int pointsHalf,int pointsFull,int[] code,int[] positions) {
         this.positions = positions;
+        this.pointsFull=pointsFull;
+        this.pointsHalf=pointsHalf;
         this.code=code;
+        this.fulfilled=-1;
+    }
+
+    public void reset() {
         this.fulfilled=-1;
     }
 
@@ -55,7 +65,7 @@ public class Constraint {
     public boolean checkQuality(int[] quality,int nQualities) {
         ArrayList<Integer> count = new ArrayList<>(nQualities);
         for (int i = 0; i < nQualities; i++) {
-            count.set(i, 0);
+            count.add( 0);
         }
 
         for (int position:positions) {

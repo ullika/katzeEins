@@ -8,6 +8,9 @@ public class Game {
     Cat[] activeCats;
     Constraint[] activeConstraints;
 
+    Move[] moves;
+    Stack<Card> originalStack;
+
     int nPatterns;
     int nColors;
 
@@ -23,24 +26,51 @@ public class Game {
 
     Card[] display; // cards to choose from after each move
     Card[] deck; // cards you hold in your hand
-    public Game(Board board, Cat[] activeCats, Constraint[] activeConstraints, Player player) {
+    public Game(Board board, Cat[] activeCats, Constraint[] activeConstraints, Player player,int nPositions,int nPatterns,int nColors) {
         this.board=board;
         this.activeCats=activeCats;
+        this.nPatterns=nPatterns;
+        this.nColors=nColors;
+        this.activeConstraints = activeConstraints;
         this.player=player;
-        setup(activeCats.length,6,board.n);
+        reset(newStack(6,6));
     }
 
-    public void setup(int nCats,int nColors,int nPositions) {
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    public void reset(Stack<Card> stack) {
         flowerPoints=0;
         catPoints=0;
         constrPoints=0;
-        nPatterns=nCats*2;
-        this.nColors=nColors;
+        for (Constraint ac:
+        activeConstraints) {
+            ac.reset();
+        }
+
         rainbow = new boolean[nColors];
         for (int i=0;i<nColors;i++
              ) {
             rainbow[i]=false;
         }
+        cardStack = stack;
+        originalStack= (Stack<Card>) stack.clone();
+        moves = new Move[board.n-board.nFixed];
+
+        deck = new Card[]{getFromStack(), getFromStack()};
+        display=new Card[]{getFromStack(), getFromStack(), getFromStack()};
+        notflower = new boolean[board.n];
+        notcat = new boolean[board.n];
+        for (int i = 0; i < board.n; i++) {
+            this.notcat[i]=true;
+            this.notflower[i]=true;
+        }
+
+
+    }
+
+    public Stack<Card> newStack(int nColors,int nPatterns) {
         cardStack = new Stack<>();
         for (int color = 0; color < nColors; color++) {
             for (int pattern = 0; pattern < nPatterns; pattern++) {
@@ -51,27 +81,21 @@ public class Game {
             Collections.shuffle(cardStack);
 
         }
-        deck = new Card[]{getRandomCard(), getRandomCard()};
-        display=new Card[]{getRandomCard(), getRandomCard(),getRandomCard()};
-        notflower = new boolean[nPositions];
-        notcat = new boolean[nPositions];
-        for (int i = 0; i < nPositions; i++) {
-            this.notcat[i]=true;
-            this.notflower[i]=true;
-        }
-
-
+        return cardStack;
     }
     public void move() {
-        Move move=player.bestMove(board,deck,display); // one move is a tupel ((stone,field),stoneToTake)
+        Move move=player.bestMove(board,deck,display);
+        moves[board.n - board.nFixed - board.nEmpty] = move;
+
+        int[] cliques=board.update(move.fieldpos,deck[move.deckpos]); //returns array of the form (pattern,patternClique,color,colorClique)
 
         this.updateDeck(move);
         this.updateDisplay(move);
-        int[] cliques=board.update(move.fieldpos,deck[move.deckpos]); //returns array of the form (pattern,patternClique,color,colorClique)
 
         updateCats(cliques[0],cliques[1]);
         updateFlowers(cliques[2], cliques[3]);
         updateConstr(move);
+
     };
 
     void updateConstr(Move move) {
@@ -83,14 +107,17 @@ public class Game {
                 if (colorFulfilled&&patternFulfilled) {
                     constr.setFulfilled(constr.getPointsFull());
                     constrPoints += constr.getPointsFull();
+                    System.out.println("Constraint 100% fulfilled");
                     return;
                 }
                 if (colorFulfilled || patternFulfilled) {
                     constr.setFulfilled(constr.getPointsHalf());
                     constrPoints+=constr.getPointsHalf();
+                    System.out.println("Constraint 50% fulfilled");
                     return;
                 }
                 constr.setFulfilled(0);
+                System.out.println("Constraint not fulfilled");
             }
         }
     }
@@ -114,7 +141,7 @@ public class Game {
     void updateFlowers(int color, int cliqueID) {
         ArrayList<Integer> colorCliqueMembers=board.getColorCliqueMembers(cliqueID);
 
-        if (colorCliqueMembers.size()>3) {
+        if (colorCliqueMembers.size()>2) {
             for (int member:colorCliqueMembers
             ) {
                 if (!notflower[member]) {
@@ -122,6 +149,7 @@ public class Game {
                 }
             }
             flowerPoints+=3;
+            System.out.println("Found a flower!");
 
             boolean isNew=!rainbow[color];
             rainbow[color]=true;
@@ -135,6 +163,7 @@ public class Game {
             }
             if (complete && isNew) {
                 flowerPoints+=3;
+                System.out.println("Rainbow is complete!!");
             }
 
 
@@ -151,8 +180,14 @@ public class Game {
 
     }
 
+    void reset() {
+
+
+    }
+
     private void placeCat(Cat cat,int[] space) {
         catPoints += cat.getPoints();
+        System.out.println(String.format("Found a cat (%s)!!",cat.toString()));
     }
 
 
@@ -172,10 +207,10 @@ public class Game {
         deck[move.deckpos]=display[move.displaypos];
     }
     private void updateDisplay(Move move) {
-        display[move.displaypos]=getRandomCard();
+        display[move.displaypos]= getFromStack();
     }
 
-    private Card getRandomCard() {
+    private Card getFromStack() {
         return cardStack.pop();
     }
 
