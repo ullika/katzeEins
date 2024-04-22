@@ -9,6 +9,7 @@ public class View {
     JFrame frame;
     BoardPanel boardPanel;
     JLabel infoLabel;
+    JLabel summaryLabel;
     ActionListener[] al;
     public View(Game game) {
         setGame(game);
@@ -23,10 +24,14 @@ public class View {
     void update() {
         this.frame.getContentPane().remove(boardPanel);
         this.boardPanel = new BoardPanel(game.board.colors, game.board.patterns,
-                game.board.patternClique,game.activeConstraints, game.deck, game.display);
+                game.board.colorClique,game.activeConstraints, game.deck, game.display);
         this.frame.getContentPane().add(BorderLayout.CENTER,this.boardPanel);
         this.boardPanel.setVisible(true);
         this.boardPanel.repaint();
+        this.summaryLabel.setText(String.format(
+                "<html>" +
+                        "Game finished! <br> Total points: %d <br>" +
+                        "</html>", game.points()));
         this.infoLabel.setText(String.format(
                 "<html>" +
                         "Cats: %s <br>" +
@@ -41,6 +46,7 @@ public class View {
                 game.catPoints,
                 game.flowerPoints,
                 game.constrPoints, Arrays.toString(game.rainbow)));
+        this.summaryLabel.setVisible(game.finished());
         this.frame.getContentPane().revalidate();
     }
 
@@ -53,6 +59,7 @@ public class View {
                 this.boardPanel = new BoardPanel(game.board.colors, game.board.patterns,
                         game.board.patternClique,game.activeConstraints, game.deck, game.display);
                 this.infoLabel = new JLabel();
+                this.summaryLabel = new JLabel();
                 JButton newGameButton = new JButton("New Game");
                 JButton resetButton = new JButton("Reset");
                 JButton nextButton = new JButton("Next Move!");
@@ -62,7 +69,12 @@ public class View {
                 newGameButton.addActionListener(al[2]);
 
                 this.frame.getContentPane().add(BorderLayout.CENTER,this.boardPanel);
-                this.frame.getContentPane().add(BorderLayout.EAST,this.infoLabel);
+
+                JPanel infopanel = new JPanel(new BorderLayout());
+                infopanel.add(BorderLayout.NORTH,this.summaryLabel);
+                infopanel.add(BorderLayout.CENTER,this.infoLabel);
+                this.frame.getContentPane().add(BorderLayout.EAST,infopanel);
+
 
                 JPanel buttonPanel = new JPanel();
                 buttonPanel.add(BorderLayout.EAST,newGameButton);

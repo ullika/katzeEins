@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public abstract class Board {
+public class Board {
     int n=44;
     int nEmpty=22;
     int nFixed=22; //44-22 fixed at the beginning
@@ -30,6 +30,31 @@ public abstract class Board {
         this.colorCliqueMembers = new ArrayList[n];
 
     }
+
+    public Board copy() {
+        Board copy=new Board();
+        copy.patternCliqueCounter=this.patternCliqueCounter;
+        copy.colorCliqueCounter=this.colorCliqueCounter;
+        copy.colors=this.colors.clone();
+        copy.patterns=this.patterns.clone();
+        copy.patternCliqueMembers = new ArrayList[n];
+        for (int i=0;i<=patternCliqueCounter; i++) {
+            copy.patternCliqueMembers[i]=(ArrayList<Integer>) patternCliqueMembers[i].clone();
+        }
+        copy.colorCliqueMembers = new ArrayList[n];
+        for (int i=0;i<=colorCliqueCounter; i++) {
+
+            copy.colorCliqueMembers[i]=(ArrayList<Integer>) colorCliqueMembers[i].clone();
+        }
+        copy.patternClique=this.patternClique.clone();
+        copy.colorClique=this.colorClique.clone();
+        copy.neighbors=this.neighbors;
+
+        return copy;
+
+    }
+
+
     Boolean isEmpty(int position) {return -1==colors[position];}
 
     int updateCliques(int position,int quality,int counter,int[] qualityClique,ArrayList<Integer>[] qualityCliqueMembers, int[] qualities) {
@@ -41,18 +66,22 @@ public abstract class Board {
         for (int nb:nbs
              ) {
 
+
             if (-1 == nb) {
                 continue;
             }
+            //System.out.printf("Current quality: %d. NB's quality: %d%n",quality,qualities[nb]);
             if (qualities[nb]==quality&&qualityClique[nb]!=counter) {
-                System.out.println(String.format("Position %d has neighbor %d with same quality. old clique id %d. " +
-                        "number of members: %d ",position,nb,qualityClique[nb],qualityCliqueMembers[qualityClique[nb]].size()));
+
+              //  System.out.println(String.format("Position %d has neighbor %d with same quality. old clique id %d. " +
+              //          "number of members: %d ",position,nb,qualityClique[nb],qualityCliqueMembers[qualityClique[nb]].size()));
 
                 //melt nb's clique into the new one
                 int clique=qualityClique[nb];
                 for (int member:qualityCliqueMembers[clique]
                      ) {
-                    System.out.println(String.format("old clique id: %d, new id: %d",clique,counter));
+
+                    //System.out.println(String.format("old clique id: %d, new id: %d",clique,counter));
                     qualityCliqueMembers[counter].add(member);
                     qualityClique[member]=counter;
                 }

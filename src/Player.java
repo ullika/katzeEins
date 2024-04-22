@@ -3,7 +3,7 @@ public class Player {
     public Player(Strategy strategy) {
         this.strategy=strategy;
     }
-    Move bestMove(Board board, Card[] deck, Card[] display){
-        return strategy.bestMove(board, deck, display);
+    Move bestMove(Game game){
+        return strategy.bestMove(game);
     }
 }

@@ -1,7 +1,9 @@
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.random.RandomGenerator;
 
-public class Game {
-    Player player;
+public class Game implements Cloneable{
+
     Board board;
 
     Stack<Card> cardStack;
@@ -26,13 +28,12 @@ public class Game {
 
     Card[] display; // cards to choose from after each move
     Card[] deck; // cards you hold in your hand
-    public Game(Board board, Cat[] activeCats, Constraint[] activeConstraints, Player player,int nPositions,int nPatterns,int nColors) {
+    public Game(Board board, Cat[] activeCats, Constraint[] activeConstraints, int nPositions,int nPatterns,int nColors) {
         this.board=board;
         this.activeCats=activeCats;
         this.nPatterns=nPatterns;
         this.nColors=nColors;
         this.activeConstraints = activeConstraints;
-        this.player=player;
         reset(newStack(6,6));
     }
 
@@ -67,7 +68,22 @@ public class Game {
             this.notflower[i]=true;
         }
 
+    }
 
+    public Game copy() {
+        Game copy = new Game(board.copy(),activeCats,this.activeConstraints.clone(),board.n,nPatterns,nColors);
+        copy.cardStack= (Stack<Card>) cardStack.clone();
+        copy.moves= moves.clone();
+        copy.originalStack=(Stack<Card>) originalStack.clone();
+        copy.catPoints=catPoints;
+        copy.constrPoints=constrPoints;
+        copy.flowerPoints=flowerPoints;
+        copy.notcat=notcat.clone();
+        copy.notflower=notflower.clone();
+        copy.rainbow=rainbow.clone();
+        copy.display=display.clone(); // cards to choose from after each move
+        copy.deck=deck.clone(); // cards you hold in your hand
+        return copy;
     }
 
     public Stack<Card> newStack(int nColors,int nPatterns) {
@@ -83,14 +99,21 @@ public class Game {
         }
         return cardStack;
     }
-    public void move() {
-        Move move=player.bestMove(board,deck,display);
+    public void move(Move move) {
+  //      System.out.println(cardStack.size());
         moves[board.n - board.nFixed - board.nEmpty] = move;
-
         int[] cliques=board.update(move.fieldpos,deck[move.deckpos]); //returns array of the form (pattern,patternClique,color,colorClique)
 
         this.updateDeck(move);
         this.updateDisplay(move);
+
+        // this depends on the number of players
+        display[ThreadLocalRandom.current().nextInt(0, 3)] = getFromStack();
+        display[ThreadLocalRandom.current().nextInt(0, 3)] = getFromStack();
+
+
+
+
 
         updateCats(cliques[0],cliques[1]);
         updateFlowers(cliques[2], cliques[3]);
@@ -107,17 +130,17 @@ public class Game {
                 if (colorFulfilled&&patternFulfilled) {
                     constr.setFulfilled(constr.getPointsFull());
                     constrPoints += constr.getPointsFull();
-                    System.out.println("Constraint 100% fulfilled");
+  //                  System.out.println("Constraint 100% fulfilled");
                     return;
                 }
                 if (colorFulfilled || patternFulfilled) {
                     constr.setFulfilled(constr.getPointsHalf());
                     constrPoints+=constr.getPointsHalf();
-                    System.out.println("Constraint 50% fulfilled");
+ //                   System.out.println("Constraint 50% fulfilled");
                     return;
                 }
                 constr.setFulfilled(0);
-                System.out.println("Constraint not fulfilled");
+  //              System.out.println("Constraint not fulfilled");
             }
         }
     }
@@ -149,7 +172,7 @@ public class Game {
                 }
             }
             flowerPoints+=3;
-            System.out.println("Found a flower!");
+//            System.out.println("Found a flower!");
 
             boolean isNew=!rainbow[color];
             rainbow[color]=true;
@@ -163,7 +186,7 @@ public class Game {
             }
             if (complete && isNew) {
                 flowerPoints+=3;
-                System.out.println("Rainbow is complete!!");
+//                System.out.println("Rainbow is complete!!");
             }
 
 
@@ -187,7 +210,7 @@ public class Game {
 
     private void placeCat(Cat cat,int[] space) {
         catPoints += cat.getPoints();
-        System.out.println(String.format("Found a cat (%s)!!",cat.toString()));
+//        System.out.println(String.format("Found a cat (%s)!!",cat.toString()));
     }
 
 
@@ -195,13 +218,7 @@ public class Game {
     int points() {
         return catPoints+constrPoints+flowerPoints;
     };
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
 
-    public Player getPlayer() {
-        return player;
-    }
 
     private void updateDeck(Move move) {
         deck[move.deckpos]=display[move.displaypos];
