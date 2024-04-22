@@ -51,8 +51,12 @@ public static void viewExample(Strategy strategy) {
 
 
     public static void main(String[] args) {
-        //viewExample(new ImprovedStrategy());
-        simulate(new ImprovedStrategy(),1000);
+
+
+        simulate(new SmartStrategy(new LessRandomStrategy(5,14)), 500);
+        //viewExample(new SmartStrategy(new LessRandomStrategy(5,14)));
+
+
 
     }
 
@@ -60,7 +64,6 @@ public static void viewExample(Strategy strategy) {
     static void simulate(Strategy strategy,int nGames) {
         Cat[] cats={new StraightCat(new int[]{0, 1}),new FlexCat(new int[]{2,3}),new ChonkaCat(new int[]{4,5})};
         Constraint[] constraints={new SampleConstraint1(),new SampleConstraint2(),new SampleConstraint3()};
-        //Strategy strategy= new IncrementStrategy();
         Board board=new SampleBoard();
 
         int[] pointCounter = new int[nGames];
@@ -80,6 +83,7 @@ public static void viewExample(Strategy strategy) {
             pointCounter[i] = currentgame.points();
         }
         System.out.println(Arrays.toString(pointCounter));
+        System.out.printf("Median: %d%n",median(pointCounter));
 
 
     }
@@ -88,8 +92,32 @@ public static void viewExample(Strategy strategy) {
     static void step(Game game,Strategy strategy, View view) {
         if (!game.finished()) {
             game.move(strategy.bestMove(game));
+            boolean[][] m = ImprovedAvoidStrategy.invalidityMatrix(game);
+            System.out.printf("constr %s: %s%n", game.activeConstraints[0].toString(),Arrays.toString(m[0]));
+            System.out.printf("constr %s: %s%n", game.activeConstraints[1].toString(),Arrays.toString(m[1]));
+            System.out.printf("constr %s: %s%n", game.activeConstraints[2].toString(),Arrays.toString(m[2]));
+
+
+            for (boolean[] pair :m) {
+                if (pair[0] && pair[1]){
+                    System.out.printf("There is a constraint that is 0 percent fulfilled!%n");
+
+                }
+            }
+
         }
         view.update();
+
+    }
+
+    static int median(int[] array) {
+        Arrays.sort(array);
+        double median;
+        if (array.length % 2 == 0) {
+            return array[array.length / 2];
+        } else {
+            return (array[(array.length - 1) / 2]+array[(array.length + 1) / 2])/2;
+        }
 
     }
 }

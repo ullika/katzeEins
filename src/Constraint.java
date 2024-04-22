@@ -31,14 +31,47 @@ public class Constraint {
         return false;
     }
 
-    public boolean determined(int[] quality) {
+    public boolean full(int[] quality) {
+        return this.nOccupied(quality)==6;
+    }
+
+    public int nOccupied(int[] quality) {
+        int occupied=6;
         for (int pos:positions
-             ) {
+                ) {
             if (-1 == quality[pos]) {
-                return false;
+                occupied--;
             }
         }
-        return true;
+        return occupied;
+    }
+
+    public boolean invalid(int[] quality,int nQuality) {
+
+        int maxDifferent = this.code.length;
+        int maxOfOne = code[0];
+        int[] qualityCount=new int[nQuality];
+        Arrays.fill(qualityCount, 0);
+
+        for (int pos:positions
+             ) {
+            if (-1 != quality[pos]) {
+                qualityCount[quality[pos]]+=1;
+                if (qualityCount[quality[pos]] > maxOfOne) {
+                    return true;
+                }
+            }
+        }
+        int nDifferent=0;
+        for (int j : qualityCount) {
+            if (j > 0) {
+                nDifferent++;
+                if (nDifferent > maxDifferent) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean isFulfilled() {
@@ -53,7 +86,7 @@ public class Constraint {
         this.positions = positions;
         this.pointsFull=pointsFull;
         this.pointsHalf=pointsHalf;
-        this.code=code;
+        this.code=code; //code has to be sorted in reverse order!!
         this.fulfilled=-1;
     }
 

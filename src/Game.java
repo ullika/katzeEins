@@ -21,6 +21,9 @@ public class Game implements Cloneable{
     int constrPoints;
     int flowerPoints;
 
+    int flowerAddPoints;
+    int smallFlowerAddPoints;
+
     boolean[] notcat;
     boolean[] notflower;
 
@@ -34,7 +37,9 @@ public class Game implements Cloneable{
         this.nPatterns=nPatterns;
         this.nColors=nColors;
         this.activeConstraints = activeConstraints;
-        reset(newStack(6,6));
+        this.flowerAddPoints=3;
+        this.smallFlowerAddPoints=0;
+        reset(newStack(nColors,nPatterns));
     }
 
     public void setBoard(Board board) {
@@ -81,6 +86,8 @@ public class Game implements Cloneable{
         copy.notcat=notcat.clone();
         copy.notflower=notflower.clone();
         copy.rainbow=rainbow.clone();
+        copy.flowerAddPoints=flowerAddPoints;
+        copy.smallFlowerAddPoints = smallFlowerAddPoints;
         copy.display=display.clone(); // cards to choose from after each move
         copy.deck=deck.clone(); // cards you hold in your hand
         return copy;
@@ -119,12 +126,14 @@ public class Game implements Cloneable{
         updateFlowers(cliques[2], cliques[3]);
         updateConstr(move);
 
+
+
     };
 
     void updateConstr(Move move) {
         for (Constraint constr:activeConstraints
              ) {
-            if (constr.dependsOn(move.fieldpos)&&!constr.isFulfilled()&& constr.determined(board.colors)) {
+            if (constr.dependsOn(move.fieldpos)&&!constr.isFulfilled()&& constr.full(board.colors)) {
                 boolean colorFulfilled=(constr.checkQuality(board.colors, nColors));
                 boolean patternFulfilled=(constr.checkQuality(board.patterns, nPatterns));
                 if (colorFulfilled&&patternFulfilled) {
@@ -148,9 +157,12 @@ public class Game implements Cloneable{
     void updateCats(int pattern, int cliqueID) {
         for (Cat cat:activeCats
         ) {
+           // System.out.println(cat.toString());
+
             if (cat.hasPattern(pattern)) {
                 int[] space = findCatSpace(cat, cliqueID);
                 if (space.length > 0) {
+
                     placeCat(cat, space);
                     for(int position:space) {
                         notcat[position] = false;
@@ -164,6 +176,11 @@ public class Game implements Cloneable{
     void updateFlowers(int color, int cliqueID) {
         ArrayList<Integer> colorCliqueMembers=board.getColorCliqueMembers(cliqueID);
 
+        if (colorCliqueMembers.size() ==2) {
+            if (notflower[colorCliqueMembers.get(0)] && notflower[colorCliqueMembers.get(1)]) {
+                flowerPoints += smallFlowerAddPoints;
+            }
+        }
         if (colorCliqueMembers.size()>2) {
             for (int member:colorCliqueMembers
             ) {
@@ -171,8 +188,7 @@ public class Game implements Cloneable{
                     return;
                 }
             }
-            flowerPoints+=3;
-//            System.out.println("Found a flower!");
+            flowerPoints+=flowerAddPoints;
 
             boolean isNew=!rainbow[color];
             rainbow[color]=true;
@@ -210,7 +226,7 @@ public class Game implements Cloneable{
 
     private void placeCat(Cat cat,int[] space) {
         catPoints += cat.getPoints();
-//        System.out.println(String.format("Found a cat (%s)!!",cat.toString()));
+    //    System.out.println(String.format("Found a cat (%s)!!",cat.toString()));
     }
 
 
@@ -233,13 +249,19 @@ public class Game implements Cloneable{
 
 
     private int[] findCatSpace(Cat cat,int cliqueID) {
+        if (cat instanceof SmallCat) {
+
+        }
+
         ArrayList<Integer> clique=board.getPatternCliqueMembers(cliqueID);
         if (clique.size()<cat.getSize()) {
             return new int[]{};
+
             }; // clique too small to find a cat;
         for (int member:clique
              ) {
-            if (!notcat[member]) { // clique is invaldid because it already hosts a cat
+            if (!notcat[member]) { // clique is invalid because it already hosts a cat
+
                 return new int[]{};
             }
         }

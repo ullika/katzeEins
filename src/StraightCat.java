@@ -12,10 +12,6 @@ public class StraightCat extends Cat {
         this.name = "Straight";
     }
 
-
-
-
-
     public int[] occupation(Board board, int position, int direction) {
         return new int[]{
                 position,

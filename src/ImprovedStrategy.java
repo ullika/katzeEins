@@ -1,12 +1,17 @@
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
 
 public class ImprovedStrategy implements Strategy{
+    // next improvements: chose optimal card from display (currently: random)
+    // punish cards that invalidate the constraints
+
+
     public Move bestMove(Game game){
-        Card[] deck = game.deck;
-        Card[] display = game.display;
+
         Board board = game.board;
+
         int pos=0;
         while (!board.isEmpty(pos)){
             pos++;
@@ -27,8 +32,8 @@ public class ImprovedStrategy implements Strategy{
             testgame.move(testmove);
            // System.out.printf("check position %d estimated points: %d. %n",i,testgame.points());
             if (testgame.points()>bestval) {
-                bestmove=testmove;
-                bestval= testgame.points();
+                    bestmove=testmove;
+                    bestval= testgame.points();
             }
 
             testgame = (Game) game.copy();
