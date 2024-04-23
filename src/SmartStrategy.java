@@ -1,8 +1,6 @@
 import java.util.Collections;
 
 public class SmartStrategy implements Strategy {
-    // next improvements: chose optimal card from display (currently: random)
-    // punish cards that invalidate the constraints
 
     ValuePredictStrategy fallback;
     public SmartStrategy(ValuePredictStrategy fallback) {

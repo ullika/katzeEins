@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.Objects;
 
 public class ImprovedStrategy implements Strategy{
-    // next improvements: chose optimal card from display (currently: random)
-    // punish cards that invalidate the constraints
 
 
     public Move bestMove(Game game){
@@ -20,7 +18,6 @@ public class ImprovedStrategy implements Strategy{
         Move bestmove= new Move(0, pos, 0);
         int bestval=0;
 
-//        System.out.println("---------- new move ----------");
         for (int i = pos; i < board.n; i++) {
             if (!board.isEmpty(i)) {
                 continue;

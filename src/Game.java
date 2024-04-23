@@ -109,7 +109,6 @@ public class Game implements Cloneable {
     }
 
     public void move(Move move) {
-        //      System.out.println(cardStack.size());
         moves[board.n - board.nFixed - board.nEmpty] = move;
         int[] cliques = board.update(move.fieldpos, deck[move.deckpos]); //returns array of the form (pattern,patternClique,color,colorClique)
 
@@ -137,17 +136,17 @@ public class Game implements Cloneable {
                 if (colorFulfilled && patternFulfilled) {
                     constr.setFulfilled(constr.getPointsFull());
                     constrPoints += constr.getPointsFull();
-                    //                  System.out.println("Constraint 100% fulfilled");
+                    // System.out.println("Constraint 100% fulfilled");
                     return;
                 }
                 if (colorFulfilled || patternFulfilled) {
                     constr.setFulfilled(constr.getPointsHalf());
                     constrPoints += constr.getPointsHalf();
-                    //                   System.out.println("Constraint 50% fulfilled");
+                    // System.out.println("Constraint 50% fulfilled");
                     return;
                 }
                 constr.setFulfilled(0);
-                //              System.out.println("Constraint not fulfilled");
+                //  System.out.println("Constraint not fulfilled");
             }
         }
     }
@@ -155,7 +154,6 @@ public class Game implements Cloneable {
     void updateCats(int pattern, int cliqueID) {
         for (Cat cat : activeCats
         ) {
-            // System.out.println(cat.toString());
 
             if (cat.hasPattern(pattern)) {
                 int[] space = findCatSpace(cat, cliqueID);

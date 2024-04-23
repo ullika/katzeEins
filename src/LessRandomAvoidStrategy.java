@@ -2,13 +2,6 @@ import java.util.Collections;
 
 public class LessRandomAvoidStrategy implements Strategy {
 
-
-
-
-
-
-
-
     public Move bestMove(Game game) {
         Board board = game.board;
 
@@ -33,12 +26,9 @@ public class LessRandomAvoidStrategy implements Strategy {
         }
 
 
-
-
         Move bestmove = new Move(0, pos, 0);
         int bestval = game.points();
 
-//        System.out.println("---------- new move ----------");
         for (int i = pos; i < board.n; i++) {
             if (!board.isEmpty(i)) {
                 continue;
@@ -54,8 +44,8 @@ public class LessRandomAvoidStrategy implements Strategy {
                 Collections.shuffle(testgame.cardStack);
                 Move testmove = new Move(deckpos, i, 0);
                 testgame.move(testmove);
-                if (testgame.points()  > bestval) {
-                    boolean avoid=false;
+                if (testgame.points() > bestval) {
+                    boolean avoid = false;
                     boolean[][] m = ImprovedAvoidStrategy.invalidityMatrix(testgame);
 
                     for (boolean[] pair : m) {

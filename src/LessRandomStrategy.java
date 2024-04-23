@@ -78,7 +78,6 @@ public class LessRandomStrategy implements ValuePredictStrategy {
         Move bestmove = new Move(0, pos, 0);
         int bestval = game.points() - legacyMinus - 1;
 
-//        System.out.println("---------- new move ----------");
         for (int i = pos; i < board.n; i++) {
             if (!board.isEmpty(i)) {
                 //  System.out.printf("Skip pos %d because it is occupied.%n",i);
@@ -108,7 +107,6 @@ public class LessRandomStrategy implements ValuePredictStrategy {
                             //plus += ac.benefit(game.board.colors, card.color, reward);
                             //plus += ac.benefit(game.board.patterns, card.pattern, reward);
                             plus += reward;
-                            //  System.out.printf("plus is %d.%n",plus);
 
                         }
                     }

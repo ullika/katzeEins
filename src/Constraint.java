@@ -41,7 +41,6 @@ public class Constraint {
         for (int pos:positions
         ) {
            if (quality[pos]==qualityValue) {
-               //System.out.println("found quality");
                return this.nOccupied(quality)*reward;
            }
         }
