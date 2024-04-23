@@ -19,14 +19,13 @@ public class ImprovedStrategy implements Strategy{
 
         Move bestmove= new Move(0, pos, 0);
         int bestval=0;
-;
 
 //        System.out.println("---------- new move ----------");
         for (int i = pos; i < board.n; i++) {
             if (!board.isEmpty(i)) {
                 continue;
             }
-            Game testgame = (Game) game.copy();
+            Game testgame = game.copy();
             Collections.shuffle(testgame.cardStack);
             Move testmove=new Move(0,i,0);
             testgame.move(testmove);
@@ -36,7 +35,7 @@ public class ImprovedStrategy implements Strategy{
                     bestval= testgame.points();
             }
 
-            testgame = (Game) game.copy();
+            testgame = game.copy();
             Collections.shuffle(testgame.cardStack);
             testmove=new Move(1,i,0);
             testgame.move(testmove);

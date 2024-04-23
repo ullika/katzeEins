@@ -15,7 +15,7 @@ public class SmallCat extends Cat {
                 board.goDirection(position, direction, 1)
         };
 
-    };
+    }
 
 
 }

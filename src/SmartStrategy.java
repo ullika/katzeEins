@@ -25,19 +25,19 @@ public class SmartStrategy implements Strategy {
 
 
         int points0 = 0;
-        Game testgame = (Game) game.copy();
+        Game testgame = game.copy();
         testgame.move(bestmove);
         points0 = fallback.bestVal(testgame);
 
 
         int points1 = 0;
-        testgame = (Game) game.copy();
+        testgame = game.copy();
         Move alternative = new Move(bestmove.deckpos, bestmove.fieldpos, 1);
         testgame.move(alternative);
         points1 = fallback.bestVal(testgame);
 
         int points2 = 0;
-        testgame = (Game) game.copy();
+        testgame = game.copy();
         Move thirdOption = new Move(bestmove.deckpos, bestmove.fieldpos, 2);
         testgame.move(thirdOption);
         points2= fallback.bestVal(testgame);

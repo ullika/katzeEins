@@ -26,7 +26,6 @@ public class LessRandomAvoidStrategy implements Strategy {
         } else {
             morecats = game.activeCats;
         }
-        ;
 
         int pos = 0;
         while (!board.isEmpty(pos)) {
@@ -48,7 +47,7 @@ public class LessRandomAvoidStrategy implements Strategy {
 
             // System.out.printf("check position %d estimated points: %d. %n",i,testgame.points());
             for (int deckpos = 0; deckpos < 2; deckpos++) {
-                Game testgame = (Game) game.copy();
+                Game testgame = game.copy();
 
                 testgame.activeCats = morecats;
                 testgame.smallFlowerAddPoints = 1;
@@ -61,7 +60,8 @@ public class LessRandomAvoidStrategy implements Strategy {
 
                     for (boolean[] pair : m) {
                         if (pair[0] && pair[1]) {
-                            avoid=true;
+                            avoid = true;
+                            break;
                         }
 
 

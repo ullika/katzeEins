@@ -36,7 +36,7 @@ public class ImprovedAvoidStrategy implements Strategy{
             }
 
         for (int deckpos = 0; deckpos < 2; deckpos++) {
-            Game testgame = (Game) game.copy();
+            Game testgame = game.copy();
 
 
             Collections.shuffle(testgame.cardStack);

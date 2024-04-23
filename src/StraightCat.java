@@ -19,6 +19,6 @@ public class StraightCat extends Cat {
                 board.goDirection(position, direction, 2)
                 };
 
-    };
+    }
 
 }

@@ -1,5 +1,5 @@
 public interface Strategy {
-    abstract Move bestMove(Game game);
+    Move bestMove(Game game);
 
 
 }

@@ -22,6 +22,6 @@ public class ChonkaCat extends Cat {
                 board.goDirection(board.goDirection(position, (direction +5) % 6, 1), direction, 1)
         };
 
-    };
+    }
 
 }
