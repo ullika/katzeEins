@@ -10,6 +10,8 @@ public class Constraint {
 
     int[] code;
 
+    double difficulty;
+
     public int getPointsHalf() {
         return pointsHalf;
     }
@@ -35,6 +37,16 @@ public class Constraint {
         return this.nOccupied(quality)==6;
     }
 
+    public int benefit(int[] quality, int qualityValue,int reward) {
+        for (int pos:positions
+        ) {
+           if (quality[pos]==qualityValue) {
+               //System.out.println("found quality");
+               return this.nOccupied(quality)*reward;
+           }
+        }
+        return 0;
+    }
     public int nOccupied(int[] quality) {
         int occupied=6;
         for (int pos:positions
@@ -82,12 +94,13 @@ public class Constraint {
         this.fulfilled = value;
     }
 
-    public Constraint(int pointsHalf,int pointsFull,int[] code,int[] positions) {
+    public Constraint(int pointsHalf,int pointsFull,int[] code,int[] positions,double difficulty) {
         this.positions = positions;
         this.pointsFull=pointsFull;
         this.pointsHalf=pointsHalf;
         this.code=code; //code has to be sorted in reverse order!!
         this.fulfilled=-1;
+        this.difficulty=difficulty;
     }
 
     public void reset() {

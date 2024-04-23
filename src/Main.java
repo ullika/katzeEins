@@ -53,13 +53,9 @@ public static void viewExample(Strategy strategy) {
     public static void main(String[] args) {
 
 
-        simulate(new SmartStrategy(new LessRandomStrategy(5,14)), 500);
-        //viewExample(new SmartStrategy(new LessRandomStrategy(5,14)));
-
-
-
+        viewExample(new SmartStrategy(new LessRandomStrategy(6, 14)));
+       // simulate(new SmartStrategy(new LessRandomStrategy(6, 15)), 1000);
     }
-
 
     static void simulate(Strategy strategy,int nGames) {
         Cat[] cats={new StraightCat(new int[]{0, 1}),new FlexCat(new int[]{2,3}),new ChonkaCat(new int[]{4,5})};
@@ -93,14 +89,14 @@ public static void viewExample(Strategy strategy) {
         if (!game.finished()) {
             game.move(strategy.bestMove(game));
             boolean[][] m = ImprovedAvoidStrategy.invalidityMatrix(game);
-            System.out.printf("constr %s: %s%n", game.activeConstraints[0].toString(),Arrays.toString(m[0]));
-            System.out.printf("constr %s: %s%n", game.activeConstraints[1].toString(),Arrays.toString(m[1]));
-            System.out.printf("constr %s: %s%n", game.activeConstraints[2].toString(),Arrays.toString(m[2]));
+//            System.out.printf("constr %s: %s%n", game.activeConstraints[0].toString(),Arrays.toString(m[0]));
+//            System.out.printf("constr %s: %s%n", game.activeConstraints[1].toString(),Arrays.toString(m[1]));
+//            System.out.printf("constr %s: %s%n", game.activeConstraints[2].toString(),Arrays.toString(m[2]));
 
 
             for (boolean[] pair :m) {
                 if (pair[0] && pair[1]){
-                    System.out.printf("There is a constraint that is 0 percent fulfilled!%n");
+        //            System.out.printf("There is a constraint that is 0 percent fulfilled!%n");
 
                 }
             }
@@ -112,7 +108,6 @@ public static void viewExample(Strategy strategy) {
 
     static int median(int[] array) {
         Arrays.sort(array);
-        double median;
         if (array.length % 2 == 0) {
             return array[array.length / 2];
         } else {

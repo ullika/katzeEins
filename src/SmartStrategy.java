@@ -4,8 +4,8 @@ public class SmartStrategy implements Strategy {
     // next improvements: chose optimal card from display (currently: random)
     // punish cards that invalidate the constraints
 
-    Strategy fallback;
-    public SmartStrategy(Strategy fallback) {
+    ValuePredictStrategy fallback;
+    public SmartStrategy(ValuePredictStrategy fallback) {
         this.fallback = fallback;
     }
 
@@ -27,19 +27,30 @@ public class SmartStrategy implements Strategy {
         int points0 = 0;
         Game testgame = (Game) game.copy();
         testgame.move(bestmove);
-        testgame.move(fallback.bestMove(testgame));
-        points0 = testgame.points();
+        points0 = fallback.bestVal(testgame);
+
 
         int points1 = 0;
         testgame = (Game) game.copy();
         Move alternative = new Move(bestmove.deckpos, bestmove.fieldpos, 1);
         testgame.move(alternative);
-        testgame.move(fallback.bestMove(testgame));
-        points1 = testgame.points();
+        points1 = fallback.bestVal(testgame);
+
+        int points2 = 0;
+        testgame = (Game) game.copy();
+        Move thirdOption = new Move(bestmove.deckpos, bestmove.fieldpos, 2);
+        testgame.move(thirdOption);
+        points2= fallback.bestVal(testgame);
 
         if (points1 > points0) {
+            if (points2>points1) {
+                return thirdOption;
+            }
             return alternative;
         } else {
+            if (points2 > points0) {
+                return thirdOption;
+            }
             return bestmove;
         }
 

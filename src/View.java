@@ -10,6 +10,7 @@ public class View {
     BoardPanel boardPanel;
     JLabel infoLabel;
     JLabel summaryLabel;
+    JLabel catInfoLabel;
     ActionListener[] al;
     public View(Game game) {
         setGame(game);
@@ -28,6 +29,19 @@ public class View {
         this.frame.getContentPane().add(BorderLayout.CENTER,this.boardPanel);
         this.boardPanel.setVisible(true);
         this.boardPanel.repaint();
+        String catInfo="";
+        for (Cat cat : game.activeCats) {
+            catInfo=catInfo.concat(cat.name+": ");
+            for (int pattern : cat.patterns) {
+                catInfo=catInfo.concat(boardPanel.patternNames[pattern].split("\\.")[0]).concat(" ");
+            }
+            catInfo=catInfo.concat("<br>");
+        }
+        this.catInfoLabel.setText(String.format(
+                "<html> CAT INFO: <br>" +
+                catInfo+
+                        "</html>"
+        ));
         this.summaryLabel.setText(String.format(
                 "<html>" +
                         "Game finished! <br> Total points: %d <br>" +
@@ -59,6 +73,7 @@ public class View {
                 this.boardPanel = new BoardPanel(game.board.colors, game.board.patterns,
                         game.board.patternClique,game.activeConstraints, game.deck, game.display);
                 this.infoLabel = new JLabel();
+                this.catInfoLabel = new JLabel();
                 this.summaryLabel = new JLabel();
                 JButton newGameButton = new JButton("New Game");
                 JButton resetButton = new JButton("Reset");
@@ -73,6 +88,7 @@ public class View {
                 JPanel infopanel = new JPanel(new BorderLayout());
                 infopanel.add(BorderLayout.NORTH,this.summaryLabel);
                 infopanel.add(BorderLayout.CENTER,this.infoLabel);
+                infopanel.add(BorderLayout.SOUTH, this.catInfoLabel);
                 this.frame.getContentPane().add(BorderLayout.EAST,infopanel);
 
 
