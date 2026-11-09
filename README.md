@@ -15,3 +15,18 @@ The Calico board...
 ![Katze1](img/katze1.jpg?raw=true "Katze1")
 
 ...and its representation in Katze1.
+
+File structure
+--------------
+
+*src/* 
+
+Java source files
+
+*notebooks/* 
+
+Wolfram/Mathematica notebooks for the statistical evaluation of the bot performance
+
+*img/* 
+
+Screenshots and other images.
